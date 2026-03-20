@@ -2,10 +2,10 @@
 
 This week is meant to introduce you to building and hosting basic web applications using Streamlit for hosting. We'll also cover a few tools and Python techniques pertinent to this process. In particular, we will focus on the following:
 
+- Model definition
 - Streamlit Deployment
 - Environment variables
 - Python Decorators
-- (optional) Backblaze B2 Cloud Storage
 
 ## setup
 
