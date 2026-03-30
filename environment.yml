@@ -9,4 +9,4 @@ dependencies:
     - boto3
     - ipykernel
     - vaderSentiment
-    - plotly
+    - plotlypip
