@@ -3,7 +3,17 @@ import pandas as pd
 
 
 class GroupEstimate(object):
+    """A grouped estimator for categorical features and continuous targets."""
+
     def __init__(self, estimate):
+        """
+        Initialize the GroupEstimate model.
+
+        Parameters
+        ----------
+        estimate : str
+            Aggregation method to use ('mean' or 'median').
+        """
         if estimate not in {"mean", "median"}:
             raise ValueError("estimate must be 'mean' or 'median'")
 
@@ -14,6 +24,19 @@ class GroupEstimate(object):
         self.default_category = None
 
     def fit(self, X, y, default_category=None):
+        """
+        Fit the model using categorical features and a continuous target.
+
+        Parameters
+        ----------
+        X : pandas.DataFrame
+            DataFrame containing categorical features.
+        y : array-like
+            Continuous target values corresponding to rows in X.
+        default_category : str, optional
+            Column name to use for fallback grouping when combinations
+            are missing.
+        """
         if not isinstance(X, pd.DataFrame):
             raise TypeError("X must be a pandas DataFrame")
 
@@ -35,10 +58,26 @@ class GroupEstimate(object):
             if default_category not in self.columns:
                 raise ValueError("default_category must be a column in X")
 
-            default_grouped = df.groupby(default_category, observed=True)["_target"].agg(agg_func)
+            default_grouped = df.groupby(
+                default_category, observed=True
+            )["_target"].agg(agg_func)
+
             self.default_map = default_grouped.to_dict()
 
     def predict(self, X):
+        """
+        Predict target values for new observations.
+
+        Parameters
+        ----------
+        X : array-like or pandas.DataFrame
+            New categorical observations.
+
+        Returns
+        -------
+        list
+            Predicted values based on learned group estimates.
+        """
         if self.group_map is None:
             raise ValueError("Model has not been fitted yet")
 
@@ -56,8 +95,11 @@ class GroupEstimate(object):
             else:
                 if self.default_map is not None:
                     fallback_value = row[self.default_category]
+
                     if fallback_value in self.default_map:
-                        predictions.append(self.default_map[fallback_value])
+                        predictions.append(
+                            self.default_map[fallback_value]
+                        )
                         continue
 
                 predictions.append(np.nan)
